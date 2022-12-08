@@ -1,13 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 	<title>Booking</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" 
-    integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vanillajs-datepicker@1.2.0/dist/css/datepicker-bs4.min.css">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
+	integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+	<link rel="stylesheet"
+	href="https://cdn.jsdelivr.net/npm/vanillajs-datepicker@1.1.2/dist/css/datepicker-bs4.min.css">
 	<link rel="stylesheet" type="text/css" href="https://unpkg.com/notie/dist/notie.min.css">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10.15.5/dist/sweetalert2.min.css">
+
 	    <style>
 	    	.my-footer { 
 	    		height: 5em;
@@ -21,8 +26,8 @@
 	    	 	max-width: 50%;
 	    	 }
 
-			 .redText{
-				 color: red;
+			 .datepicker{ 
+				z-index: 10000;
 			 }
 	    </style>	
 </head>
@@ -64,7 +69,6 @@
 
 
 	<div class="container">
-		
 		<div class = "row">
 			<div class="col-md-3"></div>
 			<div class="col-md-6">
@@ -76,11 +80,11 @@
 							<div class = "form-row" id="reservation-dates">
 
 								<div class="col">
-									<input required class="form-control" type="text"  name="start" placeholder="Arrival">
+									<input required class="form-control" type="text"  name="start_res" placeholder="Arrival">
 								</div>
 
 								<div class="col">
-									<input required class="form-control" type="text"  name="end" placeholder="Departure">
+									<input required class="form-control" type="text"  name="end_res" placeholder="Departure">
 								</div>
 
 							</div>
@@ -143,66 +147,155 @@
 		})();
 
 
-		console.log("Printing from javascript")
-		document.getElementById("colorButton").addEventListener("click", function (){
-			//notifyModel('Error!',"<em>hello, world</em>", "success","Confirm")
-			attention.toast({msg:"Hello world!"})
-		})
+		document.getElementById("colorButton").addEventListener("click", function () {
+        let html = `
+        <form id="check-availability-form" action="" method="post" novalidate class="needs-validation">
+            <div class="form-row">
+                <div class="col">
+                    <div class="form-row" id="reservation-dates-modal">
+                        <div class="col">
+                            <input disabled required class="form-control" type="text" name="start" id="start" placeholder="Arrival">
+                        </div>
+                        <div class="col">
+                            <input disabled required class="form-control" type="text" name="end" id="end" placeholder="Departure">
+                        </div>
 
-		const elem = document.getElementById('reservation-dates');
-		const rangepicker = new DateRangePicker(elem, {
-			// ...options
-		});
+                    </div>
+                </div>
+            </div>
+        </form>
+        `;
+        attention.custom({
+            title: 'Choose your dates',
+            msg: html,
+        });
+    })
 
+    const elem = document.getElementById('reservation-dates');
+    const rangePicker = new DateRangePicker(elem, {
+        format: "yyyy-mm-dd",
+    });
 
-		function notify(msg,msgType){
-			notie.alert({
-				type: msgType,
-				text: msg,
-			})
-		}
+    function notify(msg, msgType) {
+        notie.alert({
+            type: msgType,
+            text: msg,
+        })
+    }
 
-		function notifyModel(title, text,icon,confirmButtonText){
-			Swal.fire({
-				title: title,
-				html: text,
-				icon: icon,
-				confirmButtonText: confirmButtonText
-			})
-		}
-		function Promt(){
-			let toast = function(c){
-				const {
-					msg = "",
-					icon = "success",
-					position = "top-end"
-				} = c;
+    function notifyModal(title, text, icon, confirmationButtonText) {
+        Swal.fire({
+            title: title,
+            html: text,
+            icon: icon,
+            confirmButtonText: confirmationButtonText
+        })
+    }
 
-				const Toast = Swal.mixin({
-					toast: true,
-					title: msg,
-					position: position,
-					icon: icon,
-					showConfirmButton: false,
-					timer: 3000,
-					timerProgressBar: true,
-					didOpen: (toast) => {
-						toast.addEventListener('mouseenter', Swal.stopTimer)
-						toast.addEventListener('mouseleave', Swal.resumeTimer)
-					}
-				})
+    function Prompt() {
+        let toast = function (c) {
+            const{
+                msg = '',
+                icon = 'success',
+                position = 'top-end',
 
-				Toast.fire({})
-			}
-			let success = function(){
-				console.log("clicked button and got success")
-			}
-			return{
-				toast: toast,
-				success: success,
-			}
-		}
-	</script>
+            } = c;
+
+            const Toast = Swal.mixin({
+                toast: true,
+                title: msg,
+                position: position,
+                icon: icon,
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+                }
+            })
+
+            Toast.fire({})
+        }
+
+        let success = function (c) {
+            const {
+                msg = "",
+                title = "",
+                footer = "",
+            } = c
+
+            Swal.fire({
+                icon: 'success',
+                title: title,
+                text: msg,
+                footer: footer,
+            })
+
+        }
+
+        let error = function (c) {
+            const {
+                msg = "",
+                title = "",
+                footer = "",
+            } = c
+
+            Swal.fire({
+                icon: 'error',
+                title: title,
+                text: msg,
+                footer: footer,
+            })
+
+        }
+
+        async function custom(c) {
+            const {
+                msg = "",
+                title = "",
+            } = c;
+
+            const { value: formValues } = await Swal.fire({
+                title: title,
+                html: msg,
+                backdrop: false,
+                focusConfirm: false,
+                showCancelButton: true,
+                willOpen: () => {
+                    const elem = document.getElementById("reservation-dates-modal");
+                    const rp = new DateRangePicker(elem, {
+                        format: 'yyyy-mm-dd',
+                        showOnFocus: true,
+                    })
+                },
+                didOpen: () => {
+                    document.getElementById("start").removeAttribute("disabled");
+                    document.getElementById("end").removeAttribute("disabled");
+                },
+                preConfirm: () => {
+                    return [
+                        document.getElementById('start').value,
+                        document.getElementById('end').value
+                    ]
+                }
+            })
+
+            if (formValues) {
+                Swal.fire(JSON.stringify(formValues))
+            }
+        }
+
+        return {
+            toast: toast,
+            success: success,
+            error: error,
+            custom: custom,
+        }
+    }
+
+</script>
 
 </body>
+
 </html>
