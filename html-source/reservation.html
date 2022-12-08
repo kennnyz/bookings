@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" 
     integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vanillajs-datepicker@1.2.0/dist/css/datepicker-bs4.min.css">
+	<link rel="stylesheet" type="text/css" href="https://unpkg.com/notie/dist/notie.min.css">
 	    <style>
 	    	.my-footer { 
 	    		height: 5em;
@@ -88,9 +89,6 @@
 					<hr>
 				  	<button type="submit" class="btn btn-primary">Search Avalability</button>
 				</form>
-
-
-
 				</div>
 		</div>
 		<div class="row">
@@ -122,9 +120,10 @@
         integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns" 
         crossorigin="anonymous"></script>
 	<script src="https://cdn.jsdelivr.net/npm/vanillajs-datepicker@1.2.0/dist/js/datepicker-full.min.js"></script>
+	<script src="https://unpkg.com/notie"></script>
+	<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 	<script>
-
-		// Example starter JavaScript for disabling form submissions if there are invalid fields
+		let attention = Promt();
 		(function() {
 			'use strict';
 			window.addEventListener('load', function() {
@@ -146,19 +145,64 @@
 
 		console.log("Printing from javascript")
 		document.getElementById("colorButton").addEventListener("click", function (){
-			let myEl = document.getElementById("myParagraph")
-
-			if (myEl.classList.contains("redText")){
-				myEl.classList.remove("redText")
-			} else {
-				myEl.classList.add("redText")
-			}
+			//notifyModel('Error!',"<em>hello, world</em>", "success","Confirm")
+			attention.toast({msg:"Hello world!"})
 		})
 
 		const elem = document.getElementById('reservation-dates');
 		const rangepicker = new DateRangePicker(elem, {
 			// ...options
 		});
+
+
+		function notify(msg,msgType){
+			notie.alert({
+				type: msgType,
+				text: msg,
+			})
+		}
+
+		function notifyModel(title, text,icon,confirmButtonText){
+			Swal.fire({
+				title: title,
+				html: text,
+				icon: icon,
+				confirmButtonText: confirmButtonText
+			})
+		}
+		function Promt(){
+			let toast = function(c){
+				const {
+					msg = "",
+					icon = "success",
+					position = "top-end"
+				} = c;
+
+				const Toast = Swal.mixin({
+					toast: true,
+					title: msg,
+					position: position,
+					icon: icon,
+					showConfirmButton: false,
+					timer: 3000,
+					timerProgressBar: true,
+					didOpen: (toast) => {
+						toast.addEventListener('mouseenter', Swal.stopTimer)
+						toast.addEventListener('mouseleave', Swal.resumeTimer)
+					}
+				})
+
+				Toast.fire({})
+			}
+			let success = function(){
+				console.log("clicked button and got success")
+			}
+			return{
+				toast: toast,
+				success: success,
+			}
+		}
 	</script>
+
 </body>
 </html>
