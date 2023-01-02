@@ -3,9 +3,9 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/kennnyz/bookings/pckg/config"
-	"github.com/kennnyz/bookings/pckg/models"
-	"github.com/kennnyz/bookings/pckg/render"
+	"github.com/kennnyz/bookings/internal/config"
+	"github.com/kennnyz/bookings/internal/models"
+	"github.com/kennnyz/bookings/internal/render"
 	"log"
 	"net/http"
 )
